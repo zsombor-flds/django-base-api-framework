@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from rest_framework import status
+from rest_framework import status, generics, mixins
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +8,30 @@ from rest_framework.views import APIView
 from .models import Article
 from .serializers import ArticleSerializer
 
-# Create your views here.
+# Example of class based Generic API View
+class GenericApiViews(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin,\
+                     mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
+    serializer_class = ArticleSerializer
+    queryset = Article.objects.all()
+
+    lookup_field = 'id'
+    def get(self, request, id=None):
+        if id:
+            return self.retrieve(request)
+        else:
+
+            return self.list(request)
+
+    def post(self, request):
+        return self.create(request)
+
+    def put(self, request, id=None):
+        return self.update(request, id)
+
+    def delete(self, request, id=None):
+        return self.destroy(request, id)
+
+# Example of class based API View
 class ArticleApiView(APIView):
 
     def get(self, request):
@@ -25,6 +48,7 @@ class ArticleApiView(APIView):
         else: 
             return Response(serializer.data, status= status.HTTP_400_BAD_REQUEST)
 
+# Example of class based API View
 class ArticleDetails(APIView):
     
     def get_object(self, id):
