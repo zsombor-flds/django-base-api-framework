@@ -1,4 +1,4 @@
-# Side Home dev
+# Django rest_framework reference
 
 ## Django
 
