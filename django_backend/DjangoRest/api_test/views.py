@@ -4,6 +4,9 @@ from rest_framework import status, generics, mixins
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+# from rest_framework.authentication import SessionAuthentication, BaseAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Article
 from .serializers import ArticleSerializer
@@ -13,13 +16,16 @@ class GenericApiViews(generics.GenericAPIView, mixins.ListModelMixin, mixins.Cre
                      mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
-
     lookup_field = 'id'
+    # authentication_classes = [SessionAuthentication, BaseAuthentication]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, id=None):
+        
         if id:
             return self.retrieve(request)
         else:
-
             return self.list(request)
 
     def post(self, request):
