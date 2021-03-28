@@ -1,5 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_cookie, vary_on_headers
+
+
 from rest_framework import status, generics, mixins
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -21,6 +27,9 @@ class GenericApiViews(generics.GenericAPIView, mixins.ListModelMixin, mixins.Cre
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    # With cookie: cache requested url for each user for 2 hours
+    @method_decorator(cache_page(60*60*2))
+    @method_decorator(vary_on_cookie)
     def get(self, request, id=None):
         
         if id:
