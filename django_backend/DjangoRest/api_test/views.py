@@ -23,13 +23,9 @@ class GenericApiViews(generics.GenericAPIView, mixins.ListModelMixin, mixins.Cre
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
     lookup_field = 'id'
-    # authentication_classes = [SessionAuthentication, BaseAuthentication]
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # With cookie: cache requested url for each user for 2 hours
-    @method_decorator(cache_page(60*60*2))
-    @method_decorator(vary_on_cookie)
     def get(self, request, id=None):
         
         if id:
